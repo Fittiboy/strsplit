@@ -81,6 +81,14 @@ mod tests {
     }
 
     #[test]
+    fn leading_delimiter() {
+        let haystack = " a b c";
+        let delim = " ";
+        let letters: Vec<_> = StrSplit::new(haystack, delim).collect();
+        assert_eq!(letters, ["", "a", "b", "c"]);
+    }
+
+    #[test]
     fn crazy_split() {
         let haystack = "a<hello>, b<hello>, c<hello>, <hello>, ";
         let delim = "<hello>, ";
