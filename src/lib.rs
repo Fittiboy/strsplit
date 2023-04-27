@@ -22,7 +22,7 @@ impl<'a> Iterator for StrSplit<'a> {
                 let item = &self.remainder[..idx];
                 self.remainder = &self.remainder[(idx + self.delimiter.len())..];
                 if self.remainder.is_empty() && idx > 0 {
-                    self.remainder = " ";
+                    self.remainder = self.delimiter;
                 }
                 return Some(item);
             }
@@ -49,7 +49,7 @@ mod tests {
     }
 
     #[test]
-    fn split_by_empty_string() {
+    fn dont_split_by_empty_string() {
         let haystack = "a, b, c, d, e, f, g";
         let delim = "";
         let letters: Vec<_> = StrSplit::new(haystack, delim).collect();
@@ -70,5 +70,21 @@ mod tests {
         let delim = " ";
         let letters: Vec<_> = StrSplit::new(haystack, delim).collect();
         assert_eq!(letters, [""; 0]);
+    }
+
+    #[test]
+    fn split_by_long_trail() {
+        let haystack = "a  b  ";
+        let delim = "  ";
+        let letters: Vec<_> = StrSplit::new(haystack, delim).collect();
+        assert_eq!(letters, ["a", "b", ""]);
+    }
+
+    #[test]
+    fn crazy_split() {
+        let haystack = "a<hello>, b<hello>, c<hello>, <hello>, ";
+        let delim = "<hello>, ";
+        let letters: Vec<_> = StrSplit::new(haystack, delim).collect();
+        assert_eq!(letters, ["a", "b", "c", ""]);
     }
 }
